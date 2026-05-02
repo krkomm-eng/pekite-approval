@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Pekite</title>
+<style>
+  body { font-family: sans-serif; display: flex; align-items: center;
+         justify-content: center; min-height: 100vh; margin: 0;
+         background: #F5E6D3; }
+  .card { background: #fff; border-radius: 20px; padding: 40px;
+          text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,.12);
+          max-width: 400px; width: 90%; }
+  h1 { color: #3D2B1F; margin-bottom: 8px; font-size: 28px; }
+  p  { color: #7A5C47; font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <h1>⏳ Обработка...</h1>
+  <p>Пожалуйста, подождите</p>
+</div>
+<script>
+  const p      = new URLSearchParams(location.search);
+  const dbUrl  = p.get('dbUrl');
+  const id     = p.get('id');
+  const action = p.get('action');
+
+  fetch(dbUrl + '/orders/' + id + '/status.json', {
+    method: 'PUT',
+    body: JSON.stringify(action),
+    headers: { 'Content-Type': 'application/json' }
+  }).then(r => {
+    document.getElementById('card').innerHTML = action === 'approved'
+      ? '<h1>✅ Заказ принят!</h1><p>Клиент уведомлён автоматически.</p>'
+      : '<h1>❌ Заказ отклонён</h1><p>Клиент уведомлён автоматически.</p>';
+  }).catch(() => {
+    document.getElementById('card').innerHTML = '<h1>⚠️ Ошибка</h1><p>Попробуйте снова.</p>';
+  });
+</script>
+</body>
+</html>
